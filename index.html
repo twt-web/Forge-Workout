@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FORGE — Strength Program</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a; --surface: #111111; --card: #181818; --border: #2a2a2a;
+    --accent: #e8ff00; --accent2: #ff4d00; --text: #f0f0f0; --muted: #666; --done: #1a2a00;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; padding-bottom:80px; }
+  header { background:var(--surface); border-bottom:2px solid var(--accent); padding:0 2rem; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; height:64px; }
+  .logo { font-family:'Bebas Neue',sans-serif; font-size:2rem; letter-spacing:4px; color:var(--accent); }
+  .logo span { color:var(--text); }
+  .header-meta { font-size:0.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:2px; }
+  .container { max-width:1100px; margin:0 auto; padding:2rem; }
+  .week-banner { background:linear-gradient(135deg,#111 0%,#1a1a00 100%); border:1px solid var(--border); border-left:4px solid var(--accent); border-radius:4px; padding:1.5rem 2rem; margin-bottom:2rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; }
+  .week-title { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; letter-spacing:3px; }
+  .week-desc { color:var(--muted); font-size:0.85rem; margin-top:0.2rem; }
+  .progress-label .num { font-family:'Bebas Neue',sans-serif; font-size:2rem; color:var(--accent); }
+  .progress-label .sub { font-size:0.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+  .gif-status { font-size:0.7rem; padding:0.4rem 0.9rem; border-radius:3px; margin-top:0.5rem; display:inline-block; }
+  .gif-status.found { background:#1a2a00; color:#aef542; }
+  .gif-status.missing { background:#2a1000; color:#ff9966; }
+  .day-tabs { display:flex; gap:0.5rem; margin-bottom:2rem; overflow-x:auto; padding-bottom:0.5rem; }
+  .day-tab { flex-shrink:0; padding:0.6rem 1.2rem; border:1px solid var(--border); border-radius:4px; cursor:pointer; font-size:0.8rem; font-weight:600; text-transform:uppercase; letter-spacing:1px; background:var(--surface); color:var(--muted); transition:all 0.2s; }
+  .day-tab:hover { border-color:var(--accent); color:var(--text); }
+  .day-tab.active { background:var(--accent); color:#000; border-color:var(--accent); }
+  .day-tab .tag { display:block; font-size:0.6rem; font-weight:400; margin-top:1px; opacity:0.7; }
+  .day-tab.rest-tab { border-style:dashed; }
+  .day-tab.rest-tab.active { background:var(--border); color:var(--muted); border-color:var(--muted); }
+  .section-label { font-family:'Bebas Neue',sans-serif; font-size:1.1rem; letter-spacing:3px; color:var(--muted); margin-bottom:1rem; display:flex; align-items:center; gap:0.8rem; }
+  .section-label::after { content:''; flex:1; height:1px; background:var(--border); }
+  .exercise-grid { display:grid; gap:1rem; }
+  .exercise-card { background:var(--card); border:1px solid var(--border); border-radius:6px; overflow:hidden; transition:border-color 0.2s; }
+  .exercise-card:hover { border-color:#444; }
+  .exercise-card.completed { border-color:#4a7a00; background:var(--done); }
+  .card-top { display:flex; }
+  .gif-wrap { width:220px; min-width:220px; height:220px; background:#0d0d0d; overflow:hidden; position:relative; flex-shrink:0; cursor:pointer; touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
+  .gif-wrap video { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; display:block; }
+  .gif-wrap img { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; display:none; }
+  .gif-wrap .gif-missing { position:absolute; top:0; left:0; width:100%; height:100%; }
+  .play-overlay { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:48px; height:48px; background:rgba(0,0,0,0.55); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2rem; color:#fff; pointer-events:none; z-index:2; }
+  .gif-missing { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0.4rem; width:100%; height:100%; color:#333; font-size:0.58rem; text-transform:uppercase; letter-spacing:1px; text-align:center; padding:0.8rem; }
+  .gif-missing .big-icon { font-size:2.2rem; opacity:0.5; }
+  .gif-missing span { opacity:0.5; line-height:1.3; }
+  .card-info { padding:1rem 1.2rem; flex:1; display:flex; flex-direction:column; justify-content:space-between; }
+  .exercise-name { font-family:'Bebas Neue',sans-serif; font-size:1.2rem; letter-spacing:2px; line-height:1.1; }
+  .exercise-muscle { font-size:0.7rem; text-transform:uppercase; letter-spacing:1px; margin-top:2px; margin-bottom:0.6rem; }
+  .set-label { font-size:0.7rem; color:var(--muted); margin-bottom:0.4rem; }
+  .sets-row { display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.6rem; }
+  .set-btn { width:34px; height:34px; border-radius:4px; border:1px solid var(--border); background:var(--surface); color:var(--muted); font-size:0.7rem; font-weight:600; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; justify-content:center; font-family:'DM Sans',sans-serif; }
+  .set-btn:hover { border-color:var(--accent); color:var(--accent); }
+  .set-btn.done { background:var(--accent); color:#000; border-color:var(--accent); }
+  .ex-meta { display:flex; gap:1rem; flex-wrap:wrap; }
+  .meta-chip { font-size:0.7rem; color:var(--muted); display:flex; align-items:center; gap:0.3rem; }
+  .meta-chip strong { color:var(--text); }
+  .tip-row { padding:0.6rem 1.2rem; border-top:1px solid var(--border); font-size:0.72rem; color:var(--muted); display:flex; gap:0.4rem; align-items:flex-start; }
+  .tip-icon { color:var(--accent); flex-shrink:0; }
+  .complete-badge { margin-left:auto; background:#4a7a00; color:#aef542; font-size:0.6rem; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:2px 8px; border-radius:20px; display:none; align-items:center; align-self:flex-start; }
+  .exercise-card.completed .complete-badge { display:flex; }
+  .rest-day { text-align:center; padding:4rem 2rem; border:1px dashed var(--border); border-radius:6px; }
+  .rest-day .big { font-family:'Bebas Neue',sans-serif; font-size:3rem; letter-spacing:4px; color:var(--muted); }
+  .rest-day p { color:var(--muted); font-size:0.85rem; margin-top:0.5rem; max-width:400px; margin-inline:auto; line-height:1.6; }
+  .timer-bar { position:fixed; bottom:0; left:0; right:0; background:var(--surface); border-top:2px solid var(--accent); padding:0.8rem 2rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; z-index:200; transform:translateY(100%); transition:transform 0.3s ease; }
+  .timer-bar.visible { transform:translateY(0); }
+  .timer-label { font-size:0.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+  .timer-count { font-family:'Bebas Neue',sans-serif; font-size:2.5rem; color:var(--accent); line-height:1; min-width:80px; text-align:center; }
+  .timer-count.warning { color:var(--accent2); }
+  .timer-skip { padding:0.5rem 1.2rem; background:transparent; border:1px solid var(--border); color:var(--muted); font-size:0.75rem; cursor:pointer; border-radius:4px; font-family:'DM Sans',sans-serif; text-transform:uppercase; letter-spacing:1px; transition:all 0.2s; }
+  .timer-skip:hover { border-color:var(--text); color:var(--text); }
+  .day-panel { display:none; }
+  .day-panel.active { display:block; }
+  .stats-row { display:flex; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap; }
+  .stat-box { background:var(--card); border:1px solid var(--border); border-radius:4px; padding:0.8rem 1.2rem; flex:1; min-width:100px; }
+  .stat-box .val { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; color:var(--accent); }
+  .stat-box .lbl { font-size:0.65rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+  @media (max-width:600px) { .gif-wrap{width:130px;min-width:130px;height:130px;} .container{padding:1rem;} .exercise-name{font-size:1rem;} }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">FORGE<span>.</span></div>
+  <div class="header-meta">Intermediate · Strength · 5-Day Split</div>
+</header>
+<div class="container">
+  <div class="week-banner">
+    <div>
+      <div class="week-title">⚡ Week 1 — Hypertrophy Block</div>
+      <div class="week-desc">4–5 sets · 8–12 reps · 60–90s rest · Progressive overload each week</div>
+      <div id="gifStatusBadge" class="gif-status missing">⏳ Checking for local GIFs…</div>
+    </div>
+    <div class="progress-label">
+      <div class="num" id="globalPct">0%</div>
+      <div class="sub">Weekly Progress</div>
+    </div>
+  </div>
+  <div class="day-tabs">
+    <button class="day-tab active" onclick="switchDay(0)">Mon<span class="tag">Chest + Triceps</span></button>
+    <button class="day-tab" onclick="switchDay(1)">Tue<span class="tag">Back + Biceps</span></button>
+    <button class="day-tab" onclick="switchDay(2)">Wed<span class="tag">Legs</span></button>
+    <button class="day-tab rest-tab" onclick="switchDay(3)">Thu<span class="tag">Rest / Cardio</span></button>
+    <button class="day-tab" onclick="switchDay(4)">Fri<span class="tag">Shoulders</span></button>
+    <button class="day-tab" onclick="switchDay(5)">Sat<span class="tag">Arms + Core</span></button>
+    <button class="day-tab rest-tab" onclick="switchDay(6)">Sun<span class="tag">Full Rest</span></button>
+  </div>
+  <div class="day-panel active" id="day-0"></div>
+  <div class="day-panel" id="day-1"></div>
+  <div class="day-panel" id="day-2"></div>
+  <div class="day-panel" id="day-3">
+    <div class="rest-day"><div class="big">REST DAY</div><p>Active recovery — 20–30 min light cardio, stretching, or yoga. Let your muscles repair and grow stronger.</p></div>
+  </div>
+  <div class="day-panel" id="day-4"></div>
+  <div class="day-panel" id="day-5"></div>
+  <div class="day-panel" id="day-6">
+    <div class="rest-day"><div class="big">FULL REST</div><p>Complete rest. Sleep well, eat protein, hydrate. Your body grows during recovery — not during the workout.</p></div>
+  </div>
+</div>
+<div class="timer-bar" id="timerBar">
+  <div>
+    <div class="timer-label">🔥 Rest Timer</div>
+    <div class="timer-label" id="timerExLabel" style="color:#aaa;margin-top:2px;font-size:0.65rem;"></div>
+  </div>
+  <div class="timer-count" id="timerCount">1:30</div>
+  <button class="timer-skip" onclick="skipTimer()">Skip Rest</button>
+</div>
+
+<script>
+// ── Each exercise maps to a local GIF filename in the gifs/ subfolder ──
+const DAYS = [
+  { id:0, name:"Chest + Triceps", stats:{exercises:6,minutes:60,sets:24}, sections:[
+    { label:"Chest", exercises:[
+      { name:"Barbell Bench Press",       muscle:"Pectoralis Major",       sets:4, reps:"6–8",         rest:90,  gif:"bench_press",        icon:"🏋️", tip:"Retract your scapula, arch slightly, drive feet into the floor. Control the descent for 2 seconds." },
+      { name:"Incline Dumbbell Press",    muscle:"Upper Chest",            sets:4, reps:"8–10",        rest:75,  gif:"incline_db_press",    icon:"📐", tip:"Set bench to 30–45°. At the top, squeeze your chest hard for 1 second before lowering." },
+      { name:"Cable Fly",                 muscle:"Chest / Isolation",      sets:3, reps:"12–15",       rest:60,  gif:"cable_fly",           icon:"🔁", tip:"Slight bend in elbows. Focus on the stretch at the bottom and the squeeze at the center." },
+    ]},
+    { label:"Triceps", exercises:[
+      { name:"Close-Grip Bench Press",    muscle:"Triceps / Chest",        sets:3, reps:"8–10",        rest:75,  gif:"close_grip_bench",    icon:"🏋️", tip:"Grip shoulder-width. Keep elbows tucked close to your torso throughout." },
+      { name:"Tricep Pushdown",           muscle:"Triceps",                sets:3, reps:"12–15",       rest:60,  gif:"tricep_pushdown",     icon:"⬇️", tip:"Lock elbows at your sides — only your forearms move. Fully extend at the bottom." },
+      { name:"Overhead Tricep Extension", muscle:"Long Head Triceps",      sets:3, reps:"10–12",       rest:60,  gif:"tricep_extension",    icon:"☝️", tip:"Keep elbows pointing straight up. Targets the often-undertrained long head." },
+    ]},
+  ]},
+  { id:1, name:"Back + Biceps", stats:{exercises:6,minutes:65,sets:23}, sections:[
+    { label:"Back", exercises:[
+      { name:"Barbell Deadlift",          muscle:"Full Posterior Chain",   sets:4, reps:"5–6",         rest:120, gif:"deadlift",            icon:"🏋️", tip:"Brace your core hard. Bar stays over mid-foot. Drive through the floor, don't just pull up." },
+      { name:"Pull-Ups",                  muscle:"Lats / Rhomboids",       sets:4, reps:"8–12",        rest:90,  gif:"pullup",              icon:"⬆️", tip:"Full dead hang at the bottom. Lead with elbows and think of pulling them to your hips." },
+      { name:"Seated Cable Row",          muscle:"Mid-Back / Lats",        sets:3, reps:"10–12",       rest:75,  gif:"cable_row",           icon:"🔙", tip:"Chest up, don't round your back. Pull handle to your lower sternum and squeeze elbows back." },
+    ]},
+    { label:"Biceps", exercises:[
+      { name:"Barbell Curl",              muscle:"Biceps Brachii",         sets:3, reps:"8–10",        rest:60,  gif:"barbell_curl",        icon:"💪", tip:"No swinging — if you cheat, the weight is too heavy. Slow and controlled on the way down." },
+      { name:"Incline Dumbbell Curl",     muscle:"Long Head Biceps",       sets:3, reps:"10–12",       rest:60,  gif:"incline_db_curl",     icon:"📐", tip:"The incline angle pre-stretches your biceps for a deeper contraction. Don't rush the reps." },
+      { name:"Hammer Curl",               muscle:"Brachialis / Forearms",  sets:3, reps:"10–12",       rest:60,  gif:"hammer_curl",         icon:"🔨", tip:"Neutral grip (palms facing each other). Builds thickness and forearm strength." },
+    ]},
+  ]},
+  { id:2, name:"Legs", stats:{exercises:6,minutes:70,sets:23}, sections:[
+    { label:"Quads & Glutes", exercises:[
+      { name:"Barbell Back Squat",        muscle:"Quads / Glutes / Core",  sets:4, reps:"6–8",         rest:120, gif:"squat",               icon:"🏋️", tip:"Break at hips and knees simultaneously. Chest tall, knees tracking over toes." },
+      { name:"Leg Press",                 muscle:"Quads / Hamstrings",     sets:4, reps:"10–12",       rest:90,  gif:"leg_press",           icon:"🦵", tip:"Don't lock out knees at top. Higher foot placement = more glute, lower = more quad." },
+      { name:"Walking Lunges",            muscle:"Glutes / Quads",         sets:3, reps:"12 each leg", rest:75,  gif:"walking_lunge",       icon:"🚶", tip:"Keep front shin perpendicular to floor. Long strides activate glutes more." },
+    ]},
+    { label:"Hamstrings & Calves", exercises:[
+      { name:"Romanian Deadlift",         muscle:"Hamstrings / Glutes",    sets:3, reps:"10–12",       rest:75,  gif:"rdl",                 icon:"📉", tip:"Push hips back, not down. Feel the stretch in your hamstrings. Bar stays close to legs." },
+      { name:"Leg Curl",                  muscle:"Hamstrings",             sets:3, reps:"12–15",       rest:60,  gif:"leg_curl",            icon:"🔄", tip:"Pause at peak contraction for 1 second. Don't let the weight crash down on the return." },
+      { name:"Standing Calf Raise",       muscle:"Gastrocnemius",          sets:4, reps:"15–20",       rest:45,  gif:"calf_raise",          icon:"👟", tip:"Full range of motion — all the way up on toes, all the way down for a deep stretch." },
+    ]},
+  ]},
+  { id:3, rest:true },
+  { id:4, name:"Shoulders", stats:{exercises:5,minutes:55,sets:19}, sections:[
+    { label:"Shoulders", exercises:[
+      { name:"Seated DB Shoulder Press",  muscle:"Deltoids / Triceps",     sets:4, reps:"8–10",        rest:90,  gif:"shoulder_press",      icon:"⬆️", tip:"Press straight up, not in front. Stop just short of lockout to keep tension on delts." },
+      { name:"Lateral Raises",            muscle:"Lateral Deltoid",        sets:4, reps:"12–15",       rest:60,  gif:"lateral_raise",       icon:"↔️", tip:"Lead with elbows, not hands. Tilt pinkies slightly up at the top like pouring a pitcher." },
+      { name:"Face Pulls",                muscle:"Rear Delts / Rotator Cuff",sets:3,reps:"15–20",      rest:60,  gif:"face_pull",           icon:"🎯", tip:"Cable at face height. Pull toward your face with elbows flared high. Essential for shoulder health." },
+      { name:"Front Raises",              muscle:"Anterior Deltoid",       sets:3, reps:"12–15",       rest:60,  gif:"front_raise",         icon:"⬆️", tip:"Keep a slight bend in elbow, don't swing the weight. Alternate arms or go together." },
+      { name:"Arnold Press",              muscle:"All Three Delt Heads",   sets:3, reps:"10–12",       rest:75,  gif:"arnold_press",        icon:"🔃", tip:"Start with palms facing you, rotate out as you press. Full shoulder recruitment in one movement." },
+    ]},
+  ]},
+  { id:5, name:"Arms + Core", stats:{exercises:7,minutes:55,sets:24}, sections:[
+    { label:"Biceps", exercises:[
+      { name:"EZ-Bar Curl",               muscle:"Biceps",                 sets:4, reps:"8–10",        rest:60,  gif:"ez_curl",             icon:"〰️", tip:"EZ-bar is easier on your wrists. Keep elbows pinned at your sides throughout." },
+      { name:"Concentration Curl",        muscle:"Biceps Peak",            sets:3, reps:"12 each",     rest:45,  gif:"concentration_curl",  icon:"🎯", tip:"Rest elbow on inner thigh. Full range, full squeeze. No other muscle should be helping." },
+    ]},
+    { label:"Triceps", exercises:[
+      { name:"Skull Crushers",            muscle:"Triceps",                sets:4, reps:"10–12",       rest:60,  gif:"skull_crusher",       icon:"💀", tip:"Lower bar to forehead slowly. Don't let elbows flare out. Keep them pointing at the ceiling." },
+      { name:"Dips",                      muscle:"Triceps / Chest",        sets:3, reps:"10–15",       rest:75,  gif:"dips",                icon:"⬇️", tip:"Stay upright for more triceps emphasis. Lean forward for chest. Go until elbows hit 90°." },
+    ]},
+    { label:"Core", exercises:[
+      { name:"Cable Crunch",              muscle:"Rectus Abdominis",       sets:3, reps:"15–20",       rest:45,  gif:"cable_crunch",        icon:"🔽", tip:"Crunch down with your core, not hip flexors. Keep hips still throughout." },
+      { name:"Hanging Leg Raise",         muscle:"Lower Abs / Hip Flexors",sets:3, reps:"12–15",       rest:60,  gif:"hanging_leg_raise",   icon:"⬆️", tip:"Don't swing. Control the descent. For more difficulty, keep legs straight throughout." },
+      { name:"Plank",                     muscle:"Full Core",              sets:3, reps:"45–60 sec",   rest:45,  gif:"plank",               icon:"➡️", tip:"Squeeze glutes and abs simultaneously. Don't let hips sag or pike up." },
+    ]},
+  ]},
+  { id:6, rest:true },
+];
+
+const MUSCLE_COLORS = {
+  chest:'#e8503a', pectoral:'#e8503a', back:'#4a90d9', lat:'#4a90d9',
+  rhom:'#4a90d9', bicep:'#7b68ee', tricep:'#5dade2', quad:'#58d68d',
+  glute:'#52be80', leg:'#58d68d', hamstring:'#27ae60', calf:'#1e8449',
+  gastro:'#1e8449', shoulder:'#f39c12', delt:'#f39c12', core:'#e74c3c',
+  abs:'#e74c3c', hip:'#e74c3c', forearm:'#9b59b6', brachial:'#9b59b6',
+};
+function handleVideoError(id, jpgPath, gifPath, name, icon) {
+  const wrap = document.getElementById('wrap-' + id);
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  const img = document.createElement('img');
+  img.alt = name;
+  img.src = jpgPath;
+  img.onerror = function() {
+    img.src = gifPath;
+    img.onerror = function() {
+      wrap.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%;color:#333;font-size:0.58rem;text-transform:uppercase;letter-spacing:1px;text-align:center;padding:0.8rem;gap:0.4rem;"><div style="font-size:2.2rem;opacity:0.5;">${icon}</div><span style="opacity:0.5;">No media</span></div>`;
+    };
+  };
+  wrap.appendChild(img);
+}
+
+function getMC(m) {
+  m = m.toLowerCase();
+  for (const [k,v] of Object.entries(MUSCLE_COLORS)) { if (m.includes(k)) return v; }
+  return '#e8ff00';
+}
+
+const setStates = {};
+let timerInterval=null, timerSeconds=0;
+
+function buildAllDays() {
+  DAYS.forEach(day => {
+    if (day.rest) return;
+    const panel = document.getElementById('day-'+day.id);
+    let gIdx=0, html=`<div class="stats-row">
+      <div class="stat-box"><div class="val">${day.stats.exercises}</div><div class="lbl">Exercises</div></div>
+      <div class="stat-box"><div class="val">~${day.stats.minutes}</div><div class="lbl">Minutes</div></div>
+      <div class="stat-box"><div class="val">${day.stats.sets}</div><div class="lbl">Total Sets</div></div>
+    </div>`;
+    day.sections.forEach(sec => {
+      html += `<div class="section-label">${sec.label}</div><div class="exercise-grid">`;
+      sec.exercises.forEach(ex => { html += buildCard(day.id, gIdx++, ex); });
+      html += `</div><br>`;
+    });
+    panel.innerHTML = html;
+  });
+}
+
+function buildCard(dayId, eIdx, ex) {
+  const mc = getMC(ex.muscle);
+  let sets='';
+  for (let s=0; s<ex.sets; s++) {
+    const done = setStates[`${dayId}-${eIdx}-${s}`]||false;
+    sets += `<button class="set-btn${done?' done':''}" onclick="toggleSet(${dayId},${eIdx},${s},${ex.rest},'${ex.name.replace(/'/g,"\\'")}')">S${s+1}</button>`;
+  }
+  // Media: use embedded data URI if available (standalone mode), else fall back to file path
+  const mp4Path = `gifs/${ex.gif}.mp4`;
+  const jpgPath = `gifs/${ex.gif}.jpg`;
+  const gifPath = `gifs/${ex.gif}.gif`;
+  return `
+  <div class="exercise-card" id="card-${dayId}-${eIdx}">
+    <div class="card-top">
+      <div class="gif-wrap" id="wrap-${dayId}-${eIdx}">
+        <video loop muted playsinline webkit-playsinline x5-playsinline
+          preload="auto"
+          onerror="handleVideoError('${dayId}-${eIdx}','${jpgPath}','${gifPath}','${ex.name}','${ex.icon}')">
+          <source src="${mp4Path}" type="video/mp4">
+        </video>
+      </div>
+      <div class="card-info">
+        <div>
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:0.5rem;">
+            <div>
+              <div class="exercise-name">${ex.name}</div>
+              <div class="exercise-muscle" style="color:${mc}">${ex.muscle}</div>
+            </div>
+            <div class="complete-badge">✓ Done</div>
+          </div>
+          <div class="set-label">Sets completed:</div>
+          <div class="sets-row">${sets}</div>
+        </div>
+        <div class="ex-meta">
+          <div class="meta-chip">📊 <strong>${ex.sets} sets</strong></div>
+          <div class="meta-chip">🔁 <strong>${ex.reps} reps</strong></div>
+          <div class="meta-chip">⏱ <strong>${ex.rest}s rest</strong></div>
+        </div>
+      </div>
+    </div>
+    <div class="tip-row"><span class="tip-icon">💡</span> ${ex.tip}</div>
+  </div>`;
+}
+
+function toggleSet(dayId, eIdx, setIdx, restSecs, exName) {
+  const key=`${dayId}-${eIdx}-${setIdx}`;
+  const card=document.getElementById(`card-${dayId}-${eIdx}`);
+  const btn=card?.querySelectorAll('.set-btn')[setIdx];
+  if (!btn) return;
+  const wasDone=setStates[key]||false;
+  setStates[key]=!wasDone;
+  btn.classList.toggle('done',!wasDone);
+  if (!wasDone) startTimer(restSecs, exName);
+  let exList=[];
+  DAYS[dayId].sections.forEach(s=>exList=exList.concat(s.exercises));
+  const ex=exList[eIdx];
+  if (ex&&card) {
+    let allDone=true;
+    for(let s=0;s<ex.sets;s++){if(!setStates[`${dayId}-${eIdx}-${s}`]){allDone=false;break;}}
+    card.classList.toggle('completed',allDone);
+  }
+  updateGlobalProgress();
+}
+
+function startTimer(seconds, label) {
+  if(timerInterval) clearInterval(timerInterval);
+  timerSeconds=seconds;
+  const bar=document.getElementById('timerBar'), count=document.getElementById('timerCount');
+  document.getElementById('timerExLabel').textContent=`Rest after: ${label}`;
+  bar.classList.add('visible'); updateTimerDisplay(count);
+  timerInterval=setInterval(()=>{
+    timerSeconds--;
+    if(timerSeconds<=0){
+      clearInterval(timerInterval); bar.classList.remove('visible');
+      try{const ctx=new AudioContext(),o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=880;g.gain.setValueAtTime(0.3,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.5);o.start();o.stop(ctx.currentTime+0.5);}catch(e){}
+    } else updateTimerDisplay(count);
+  },1000);
+}
+function updateTimerDisplay(el){const m=Math.floor(timerSeconds/60),s=timerSeconds%60;el.textContent=`${m}:${s.toString().padStart(2,'0')}`;el.classList.toggle('warning',timerSeconds<=10);}
+function skipTimer(){if(timerInterval)clearInterval(timerInterval);document.getElementById('timerBar').classList.remove('visible');}
+function updateGlobalProgress(){let total=0,done=0;DAYS.forEach(day=>{if(day.rest)return;let gIdx=0;day.sections.forEach(sec=>{sec.exercises.forEach(ex=>{for(let s=0;s<ex.sets;s++){total++;if(setStates[`${day.id}-${gIdx}-${s}`])done++;}gIdx++;});});});document.getElementById('globalPct').textContent=total>0?Math.round(done/total*100)+'%':'0%';}
+function switchDay(idx){document.querySelectorAll('.day-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.day-tab').forEach(t=>t.classList.remove('active'));document.getElementById('day-'+idx).classList.add('active');document.querySelectorAll('.day-tab')[idx].classList.add('active');setTimeout(initVideoTap,100);}
+
+// Tap to play/pause each video individually
+function initVideoTap() {
+  document.querySelectorAll('.gif-wrap').forEach(wrap => {
+    if (wrap.dataset.tapBound) return;
+    wrap.dataset.tapBound = '1';
+
+    const v = wrap.querySelector('video');
+    if (!v) return;
+
+    v.muted = true;
+    v.loop = true;
+
+    if (v.readyState === 0) { v.load(); }
+
+    if (!wrap.querySelector('.play-overlay')) {
+      const overlay = document.createElement('div');
+      overlay.className = 'play-overlay';
+      overlay.innerHTML = '▶';
+      wrap.appendChild(overlay);
+    }
+
+    function togglePlay(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const overlay = wrap.querySelector('.play-overlay');
+      if (v.paused || v.ended) {
+        if (v.readyState < 2) { v.load(); }
+        const p = v.play();
+        if (p && p.catch) p.catch(() => {});
+        if (overlay) overlay.style.display = 'none';
+      } else {
+        v.pause();
+        if (overlay) overlay.style.display = 'flex';
+      }
+    }
+
+    wrap.addEventListener('click', togglePlay);
+    wrap.addEventListener('touchend', togglePlay, { passive: false });
+  });
+}
+
+// Check if media files exist
+function checkGifStatus() {
+  const badge = document.getElementById('gifStatusBadge');
+  const video = document.createElement('video');
+  video.oncanplay = () => {
+    badge.textContent = '✅ Exercise videos loaded';
+    badge.className = 'gif-status found';
+  };
+  video.onerror = () => {
+    // mp4 not found, try jpg
+    const img = new Image();
+    img.onload = () => {
+      badge.textContent = '✅ Exercise images loaded';
+      badge.className = 'gif-status found';
+    };
+    img.onerror = () => {
+      badge.textContent = '⚠️ No media found — run download_gifs.py first';
+      badge.className = 'gif-status missing';
+    };
+    img.src = 'gifs/bench_press.jpg';
+  };
+  video.src = 'gifs/bench_press.mp4';
+}
+
+buildAllDays();
+updateGlobalProgress();
+checkGifStatus();
+setTimeout(initVideoTap, 200);
+</script>
+</body>
+</html>
