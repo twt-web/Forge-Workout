@@ -331,7 +331,28 @@ function updateGlobalProgress(){let total=0,done=0;DAYS.forEach(day=>{if(day.res
 function switchDay(idx){document.querySelectorAll('.day-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.day-tab').forEach(t=>t.classList.remove('active'));document.getElementById('day-'+idx).classList.add('active');document.querySelectorAll('.day-tab')[idx].classList.add('active');setTimeout(initVideoTap,100);}
 
 // Tap to play/pause each video individually
+// On iOS Safari served over HTTP (GitHub Pages), we fetch the video as a blob
+// and assign a blob: URL — iOS refuses to play cross-origin mp4 src directly on tap.
+const _blobCache = {};
+function _loadBlobSrc(v, src, callback) {
+  if (_blobCache[src]) { v.src = _blobCache[src]; if(callback) callback(); return; }
+  fetch(src)
+    .then(r => r.blob())
+    .then(blob => {
+      const url = URL.createObjectURL(blob);
+      _blobCache[src] = url;
+      v.src = url;
+      if (callback) callback();
+    })
+    .catch(() => {
+      // fallback: just assign src directly
+      v.src = src;
+      if (callback) callback();
+    });
+}
+
 function initVideoTap() {
+  const isHTTP = location.protocol === 'https:' || location.protocol === 'http:';
   document.querySelectorAll('.gif-wrap').forEach(wrap => {
     if (wrap.dataset.tapBound) return;
     wrap.dataset.tapBound = '1';
@@ -342,8 +363,6 @@ function initVideoTap() {
     v.muted = true;
     v.loop = true;
 
-    if (v.readyState === 0) { v.load(); }
-
     if (!wrap.querySelector('.play-overlay')) {
       const overlay = document.createElement('div');
       overlay.className = 'play-overlay';
@@ -351,15 +370,35 @@ function initVideoTap() {
       wrap.appendChild(overlay);
     }
 
+    // Get the original src from the <source> tag
+    const srcEl = v.querySelector('source');
+    const originalSrc = srcEl ? srcEl.getAttribute('src') : null;
+
+    function doPlay() {
+      const overlay = wrap.querySelector('.play-overlay');
+      const p = v.play();
+      if (p && p.catch) p.catch(() => {});
+      if (overlay) overlay.style.display = 'none';
+    }
+
     function togglePlay(e) {
       e.preventDefault();
       e.stopPropagation();
       const overlay = wrap.querySelector('.play-overlay');
       if (v.paused || v.ended) {
-        if (v.readyState < 2) { v.load(); }
-        const p = v.play();
-        if (p && p.catch) p.catch(() => {});
-        if (overlay) overlay.style.display = 'none';
+        if (!v.src && originalSrc) {
+          // First tap: load via blob on HTTP, direct on file://
+          if (isHTTP && originalSrc) {
+            _loadBlobSrc(v, originalSrc, () => { v.load(); doPlay(); });
+          } else {
+            v.src = originalSrc;
+            v.load();
+            doPlay();
+          }
+        } else {
+          if (v.readyState < 2) { v.load(); }
+          doPlay();
+        }
       } else {
         v.pause();
         if (overlay) overlay.style.display = 'flex';
