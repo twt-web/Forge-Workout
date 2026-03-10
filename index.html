@@ -64,13 +64,7 @@
   <div class="header-meta">Intermediate · Strength · 4-Day Split</div>
 </header>
 <div class="container">
-<div class="week-desc">3–4 sets · 6–15 reps · 45–120s rest · Progressive overload each week</div>
-    </div>
-    <div class="progress-label">
-      <div class="num" id="globalPct">0%</div>
-      <div class="sub">Weekly Progress</div>
-    </div>
-  </div>
+
   <div class="day-tabs">
     <button class="day-tab active" onclick="switchDay(0)">Mon<span class="tag">Chest + Triceps</span></button>
     <button class="day-tab" onclick="switchDay(1)">Tue<span class="tag">Back + Lower Back</span></button>
@@ -91,11 +85,6 @@
   <div class="day-panel" id="day-6">
     <div class="rest-day"><div class="big">FULL REST</div><p>Complete rest. Sleep well, eat protein, hydrate. Your body grows during recovery — not during the workout.</p></div>
   </div>
-</div>
-    <div class="timer-label" id="timerExLabel" style="color:#aaa;margin-top:2px;font-size:0.65rem;"></div>
-  </div>
-  <div class="timer-count" id="timerCount">1:30</div>
-  <button class="timer-skip" onclick="skipTimer()">Skip Rest</button>
 </div>
 
 <script>
@@ -357,23 +346,7 @@ function initVideoTap() {
   });
 }
 
-// Check if media files exist
-    })
-    .catch(() => {
-      // Try jpg fallback
-      fetch('gifs/bench_press.jpg', { method: 'HEAD' })
-        .then(r => {
-          if (r.ok) {
-            badge.textContent = '✅ Exercise images loaded';
-            badge.className = 'gif-status found';
-          } else { throw new Error('not found'); }
-        })
-        .catch(() => {
-          badge.textContent = '⚠️ No media found — run download_gifs.py first';
-          badge.className = 'gif-status missing';
-        });
-    });
-}
+
 
 buildAllDays();
 setTimeout(initVideoTap, 200);
