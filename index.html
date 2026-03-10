@@ -374,25 +374,28 @@ function initVideoTap() {
 // Check if media files exist
 function checkGifStatus() {
   const badge = document.getElementById('gifStatusBadge');
-  const video = document.createElement('video');
-  video.oncanplay = () => {
-    badge.textContent = '✅ Exercise videos loaded';
-    badge.className = 'gif-status found';
-  };
-  video.onerror = () => {
-    // mp4 not found, try jpg
-    const img = new Image();
-    img.onload = () => {
-      badge.textContent = '✅ Exercise images loaded';
-      badge.className = 'gif-status found';
-    };
-    img.onerror = () => {
-      badge.textContent = '⚠️ No media found — run download_gifs.py first';
-      badge.className = 'gif-status missing';
-    };
-    img.src = 'gifs/bench_press.jpg';
-  };
-  video.src = 'gifs/bench_press.mp4';
+  // Use fetch to check if the video file is accessible (works both locally and on GitHub Pages)
+  fetch('gifs/bench_press.mp4', { method: 'HEAD' })
+    .then(r => {
+      if (r.ok) {
+        badge.textContent = '✅ Exercise videos loaded';
+        badge.className = 'gif-status found';
+      } else { throw new Error('not found'); }
+    })
+    .catch(() => {
+      // Try jpg fallback
+      fetch('gifs/bench_press.jpg', { method: 'HEAD' })
+        .then(r => {
+          if (r.ok) {
+            badge.textContent = '✅ Exercise images loaded';
+            badge.className = 'gif-status found';
+          } else { throw new Error('not found'); }
+        })
+        .catch(() => {
+          badge.textContent = '⚠️ No media found — run download_gifs.py first';
+          badge.className = 'gif-status missing';
+        });
+    });
 }
 
 buildAllDays();
