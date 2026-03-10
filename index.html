@@ -100,12 +100,12 @@
   </div>
   <div class="day-tabs">
     <button class="day-tab active" onclick="switchDay(0)">Mon<span class="tag">Chest + Triceps</span></button>
-    <button class="day-tab" onclick="switchDay(1)">Tue<span class="tag">Back + Biceps</span></button>
-    <button class="day-tab" onclick="switchDay(2)">Wed<span class="tag">Legs</span></button>
-    <button class="day-tab rest-tab" onclick="switchDay(3)">Thu<span class="tag">Rest / Cardio</span></button>
-    <button class="day-tab" onclick="switchDay(4)">Fri<span class="tag">Shoulders</span></button>
-    <button class="day-tab" onclick="switchDay(5)">Sat<span class="tag">Arms + Core</span></button>
-    <button class="day-tab rest-tab" onclick="switchDay(6)">Sun<span class="tag">Full Rest</span></button>
+    <button class="day-tab" onclick="switchDay(1)">Tue<span class="tag">Back + Lower Back</span></button>
+    <button class="day-tab" onclick="switchDay(2)">Wed<span class="tag">Legs + Hips</span></button>
+    <button class="day-tab" onclick="switchDay(3)">Thu<span class="tag">Shoulders + Biceps</span></button>
+    <button class="day-tab rest-tab" onclick="switchDay(4)">Fri<span class="tag">Rest</span></button>
+    <button class="day-tab rest-tab" onclick="switchDay(5)">Sat<span class="tag">Rest</span></button>
+    <button class="day-tab rest-tab" onclick="switchDay(6)">Sun<span class="tag">Rest</span></button>
   </div>
   <div class="day-panel active" id="day-0"></div>
   <div class="day-panel" id="day-1"></div>
@@ -131,67 +131,69 @@
 <script>
 // ── Each exercise maps to a local GIF filename in the gifs/ subfolder ──
 const DAYS = [
-  { id:0, name:"Chest + Triceps", stats:{exercises:6,minutes:60,sets:24}, sections:[
+  { id:0, name:"Chest + Triceps", stats:{exercises:7, minutes:65, sets:26}, sections:[
     { label:"Chest", exercises:[
       { name:"Barbell Bench Press",       muscle:"Pectoralis Major",       sets:4, reps:"6–8",         rest:90,  gif:"bench_press",        icon:"🏋️", tip:"Retract your scapula, arch slightly, drive feet into the floor. Control the descent for 2 seconds." },
-      { name:"Incline Dumbbell Press",    muscle:"Upper Chest",            sets:4, reps:"8–10",        rest:75,  gif:"incline_db_press",    icon:"📐", tip:"Set bench to 30–45°. At the top, squeeze your chest hard for 1 second before lowering." },
+      { name:"Incline Dumbbell Press",    muscle:"Upper Chest",            sets:3, reps:"8–10",        rest:75,  gif:"incline_db_press",    icon:"📐", tip:"Set bench to 30–45°. At the top, squeeze your chest hard for 1 second before lowering." },
       { name:"Cable Fly",                 muscle:"Chest / Isolation",      sets:3, reps:"12–15",       rest:60,  gif:"cable_fly",           icon:"🔁", tip:"Slight bend in elbows. Focus on the stretch at the bottom and the squeeze at the center." },
     ]},
     { label:"Triceps", exercises:[
       { name:"Close-Grip Bench Press",    muscle:"Triceps / Chest",        sets:3, reps:"8–10",        rest:75,  gif:"close_grip_bench",    icon:"🏋️", tip:"Grip shoulder-width. Keep elbows tucked close to your torso throughout." },
       { name:"Tricep Pushdown",           muscle:"Triceps",                sets:3, reps:"12–15",       rest:60,  gif:"tricep_pushdown",     icon:"⬇️", tip:"Lock elbows at your sides — only your forearms move. Fully extend at the bottom." },
       { name:"Overhead Tricep Extension", muscle:"Long Head Triceps",      sets:3, reps:"10–12",       rest:60,  gif:"tricep_extension",    icon:"☝️", tip:"Keep elbows pointing straight up. Targets the often-undertrained long head." },
+      { name:"Skull Crushers",            muscle:"Triceps",                sets:3, reps:"10–12",       rest:60,  gif:"skull_crusher",       icon:"💀", tip:"Lower bar to forehead slowly. Don't let elbows flare out. Keep them pointing at the ceiling." },
     ]},
   ]},
-  { id:1, name:"Back + Biceps", stats:{exercises:6,minutes:65,sets:23}, sections:[
+  { id:1, name:"Back + Lower Back + Forearms", stats:{exercises:8, minutes:70, sets:27}, sections:[
     { label:"Back", exercises:[
-      { name:"Barbell Deadlift",          muscle:"Full Posterior Chain",   sets:4, reps:"5–6",         rest:120, gif:"deadlift",            icon:"🏋️", tip:"Brace your core hard. Bar stays over mid-foot. Drive through the floor, don't just pull up." },
+      { name:"Barbell Deadlift",          muscle:"Full Posterior Chain",   sets:3, reps:"6–8",         rest:120, gif:"deadlift",            icon:"🏋️", tip:"Light to moderate weight only. Brace your core hard. Bar stays over mid-foot. Drive through the floor." },
       { name:"Pull-Ups",                  muscle:"Lats / Rhomboids",       sets:4, reps:"8–12",        rest:90,  gif:"pullup",              icon:"⬆️", tip:"Full dead hang at the bottom. Lead with elbows and think of pulling them to your hips." },
       { name:"Seated Cable Row",          muscle:"Mid-Back / Lats",        sets:3, reps:"10–12",       rest:75,  gif:"cable_row",           icon:"🔙", tip:"Chest up, don't round your back. Pull handle to your lower sternum and squeeze elbows back." },
+      { name:"Face Pulls",                muscle:"Rear Delts / Rotator Cuff", sets:3, reps:"15–20",   rest:60,  gif:"face_pull",           icon:"🎯", tip:"Cable at face height. Pull toward your face with elbows flared high. Essential for shoulder health." },
     ]},
-    { label:"Biceps", exercises:[
-      { name:"Barbell Curl",              muscle:"Biceps Brachii",         sets:3, reps:"8–10",        rest:60,  gif:"barbell_curl",        icon:"💪", tip:"No swinging — if you cheat, the weight is too heavy. Slow and controlled on the way down." },
-      { name:"Incline Dumbbell Curl",     muscle:"Long Head Biceps",       sets:3, reps:"10–12",       rest:60,  gif:"incline_db_curl",     icon:"📐", tip:"The incline angle pre-stretches your biceps for a deeper contraction. Don't rush the reps." },
-      { name:"Hammer Curl",               muscle:"Brachialis / Forearms",  sets:3, reps:"10–12",       rest:60,  gif:"hammer_curl",         icon:"🔨", tip:"Neutral grip (palms facing each other). Builds thickness and forearm strength." },
+    { label:"Lower Back", exercises:[
+      { name:"Hyperextension",            muscle:"Lower Back / Glutes",    sets:3, reps:"12–15",       rest:60,  gif:"hyperextension",      icon:"🔼", tip:"Bodyweight or very light plate only. Squeeze glutes at the top. Never hyperextend beyond neutral." },
+    ]},
+    { label:"Forearms", exercises:[
+      { name:"Wrist Curl",                muscle:"Forearm Flexors",        sets:3, reps:"15–20",       rest:45,  gif:"wrist_curl",          icon:"🤜", tip:"Rest forearms on bench, palms up. Full range of motion — let the bar roll to fingertips." },
+      { name:"Reverse Wrist Curl",        muscle:"Forearm Extensors",      sets:3, reps:"15–20",       rest:45,  gif:"reverse_wrist_curl",  icon:"🤛", tip:"Palms facing down. Slower movement — extensors are weaker than flexors so use lighter weight." },
+      { name:"Farmer's Hold",             muscle:"Forearms / Grip",        sets:3, reps:"30–45 sec",   rest:60,  gif:"farmers_hold",        icon:"💼", tip:"Stand tall, shoulders back. Hold heavy dumbbells at sides as long as possible. Builds crushing grip." },
     ]},
   ]},
-  { id:2, name:"Legs", stats:{exercises:6,minutes:70,sets:23}, sections:[
+  { id:2, name:"Legs + Hips + Pelvis", stats:{exercises:10, minutes:80, sets:34}, sections:[
     { label:"Quads & Glutes", exercises:[
       { name:"Barbell Back Squat",        muscle:"Quads / Glutes / Core",  sets:4, reps:"6–8",         rest:120, gif:"squat",               icon:"🏋️", tip:"Break at hips and knees simultaneously. Chest tall, knees tracking over toes." },
       { name:"Leg Press",                 muscle:"Quads / Hamstrings",     sets:4, reps:"10–12",       rest:90,  gif:"leg_press",           icon:"🦵", tip:"Don't lock out knees at top. Higher foot placement = more glute, lower = more quad." },
       { name:"Walking Lunges",            muscle:"Glutes / Quads",         sets:3, reps:"12 each leg", rest:75,  gif:"walking_lunge",       icon:"🚶", tip:"Keep front shin perpendicular to floor. Long strides activate glutes more." },
     ]},
     { label:"Hamstrings & Calves", exercises:[
-      { name:"Romanian Deadlift",         muscle:"Hamstrings / Glutes",    sets:3, reps:"10–12",       rest:75,  gif:"rdl",                 icon:"📉", tip:"Push hips back, not down. Feel the stretch in your hamstrings. Bar stays close to legs." },
+      { name:"Romanian Deadlift",         muscle:"Hamstrings / Glutes",    sets:3, reps:"10–12",       rest:75,  gif:"rdl",                 icon:"📉", tip:"Light to moderate weight — push hips back, not down. Feel the stretch in your hamstrings." },
       { name:"Leg Curl",                  muscle:"Hamstrings",             sets:3, reps:"12–15",       rest:60,  gif:"leg_curl",            icon:"🔄", tip:"Pause at peak contraction for 1 second. Don't let the weight crash down on the return." },
       { name:"Standing Calf Raise",       muscle:"Gastrocnemius",          sets:4, reps:"15–20",       rest:45,  gif:"calf_raise",          icon:"👟", tip:"Full range of motion — all the way up on toes, all the way down for a deep stretch." },
     ]},
+    { label:"Hips & Pelvis", exercises:[
+      { name:"Hip Thrust",                muscle:"Glutes / Hip Extensors", sets:4, reps:"10–12",       rest:75,  gif:"hip_thrust",          icon:"🍑", tip:"Drive through heels, squeeze glutes hard at the top. Keep chin tucked — don't hyperextend your back." },
+      { name:"Cable Hip Kickback",        muscle:"Glutes / Hip Extensors", sets:3, reps:"12–15 each",  rest:60,  gif:"cable_kickback",      icon:"🦵", tip:"Keep core tight and slight forward lean. Squeeze glute at peak contraction. Don't swing the leg." },
+      { name:"Hip Abduction Machine",     muscle:"Hip Abductors / Glutes", sets:3, reps:"15–20",       rest:60,  gif:"hip_abduction",       icon:"↔️", tip:"Control the return — don't let the machine slam. Slow eccentric builds more strength." },
+      { name:"Hip Adduction Machine",     muscle:"Hip Adductors / Groin",  sets:3, reps:"15–20",       rest:60,  gif:"hip_adduction",       icon:"↔️", tip:"Balance your abductors with adductors for full pelvic stability. Squeeze inner thighs at the top." },
+    ]},
   ]},
-  { id:3, rest:true },
-  { id:4, name:"Shoulders", stats:{exercises:5,minutes:55,sets:19}, sections:[
+  { id:3, name:"Shoulders + Biceps", stats:{exercises:8, minutes:65, sets:27}, sections:[
     { label:"Shoulders", exercises:[
       { name:"Seated DB Shoulder Press",  muscle:"Deltoids / Triceps",     sets:4, reps:"8–10",        rest:90,  gif:"shoulder_press",      icon:"⬆️", tip:"Press straight up, not in front. Stop just short of lockout to keep tension on delts." },
       { name:"Lateral Raises",            muscle:"Lateral Deltoid",        sets:4, reps:"12–15",       rest:60,  gif:"lateral_raise",       icon:"↔️", tip:"Lead with elbows, not hands. Tilt pinkies slightly up at the top like pouring a pitcher." },
-      { name:"Face Pulls",                muscle:"Rear Delts / Rotator Cuff",sets:3,reps:"15–20",      rest:60,  gif:"face_pull",           icon:"🎯", tip:"Cable at face height. Pull toward your face with elbows flared high. Essential for shoulder health." },
       { name:"Front Raises",              muscle:"Anterior Deltoid",       sets:3, reps:"12–15",       rest:60,  gif:"front_raise",         icon:"⬆️", tip:"Keep a slight bend in elbow, don't swing the weight. Alternate arms or go together." },
       { name:"Arnold Press",              muscle:"All Three Delt Heads",   sets:3, reps:"10–12",       rest:75,  gif:"arnold_press",        icon:"🔃", tip:"Start with palms facing you, rotate out as you press. Full shoulder recruitment in one movement." },
+      { name:"Dips",                      muscle:"Triceps / Chest",        sets:3, reps:"10–15",       rest:75,  gif:"dips",                icon:"⬇️", tip:"Stay upright for more triceps emphasis. A great finisher for triceps after shoulder day." },
     ]},
-  ]},
-  { id:5, name:"Arms + Core", stats:{exercises:7,minutes:55,sets:24}, sections:[
     { label:"Biceps", exercises:[
-      { name:"EZ-Bar Curl",               muscle:"Biceps",                 sets:4, reps:"8–10",        rest:60,  gif:"ez_curl",             icon:"〰️", tip:"EZ-bar is easier on your wrists. Keep elbows pinned at your sides throughout." },
+      { name:"Barbell Curl",              muscle:"Biceps Brachii",         sets:3, reps:"8–10",        rest:60,  gif:"barbell_curl",        icon:"💪", tip:"No swinging. Slow and controlled on the way down." },
+      { name:"Hammer Curl",               muscle:"Brachialis / Forearms",  sets:3, reps:"10–12",       rest:60,  gif:"hammer_curl",         icon:"🔨", tip:"Neutral grip (palms facing each other). Builds thickness and forearm strength." },
       { name:"Concentration Curl",        muscle:"Biceps Peak",            sets:3, reps:"12 each",     rest:45,  gif:"concentration_curl",  icon:"🎯", tip:"Rest elbow on inner thigh. Full range, full squeeze. No other muscle should be helping." },
     ]},
-    { label:"Triceps", exercises:[
-      { name:"Skull Crushers",            muscle:"Triceps",                sets:4, reps:"10–12",       rest:60,  gif:"skull_crusher",       icon:"💀", tip:"Lower bar to forehead slowly. Don't let elbows flare out. Keep them pointing at the ceiling." },
-      { name:"Dips",                      muscle:"Triceps / Chest",        sets:3, reps:"10–15",       rest:75,  gif:"dips",                icon:"⬇️", tip:"Stay upright for more triceps emphasis. Lean forward for chest. Go until elbows hit 90°." },
-    ]},
-    { label:"Core", exercises:[
-      { name:"Cable Crunch",              muscle:"Rectus Abdominis",       sets:3, reps:"15–20",       rest:45,  gif:"cable_crunch",        icon:"🔽", tip:"Crunch down with your core, not hip flexors. Keep hips still throughout." },
-      { name:"Hanging Leg Raise",         muscle:"Lower Abs / Hip Flexors",sets:3, reps:"12–15",       rest:60,  gif:"hanging_leg_raise",   icon:"⬆️", tip:"Don't swing. Control the descent. For more difficulty, keep legs straight throughout." },
-      { name:"Plank",                     muscle:"Full Core",              sets:3, reps:"45–60 sec",   rest:45,  gif:"plank",               icon:"➡️", tip:"Squeeze glutes and abs simultaneously. Don't let hips sag or pike up." },
-    ]},
   ]},
+  { id:4, rest:true },
+  { id:5, rest:true },
   { id:6, rest:true },
 ];
 
