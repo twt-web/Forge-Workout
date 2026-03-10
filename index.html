@@ -328,7 +328,20 @@ function startTimer(seconds, label) {
 function updateTimerDisplay(el){const m=Math.floor(timerSeconds/60),s=timerSeconds%60;el.textContent=`${m}:${s.toString().padStart(2,'0')}`;el.classList.toggle('warning',timerSeconds<=10);}
 function skipTimer(){if(timerInterval)clearInterval(timerInterval);document.getElementById('timerBar').classList.remove('visible');}
 function updateGlobalProgress(){let total=0,done=0;DAYS.forEach(day=>{if(day.rest)return;let gIdx=0;day.sections.forEach(sec=>{sec.exercises.forEach(ex=>{for(let s=0;s<ex.sets;s++){total++;if(setStates[`${day.id}-${gIdx}-${s}`])done++;}gIdx++;});});});document.getElementById('globalPct').textContent=total>0?Math.round(done/total*100)+'%':'0%';}
-function switchDay(idx){document.querySelectorAll('.day-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.day-tab').forEach(t=>t.classList.remove('active'));document.getElementById('day-'+idx).classList.add('active');document.querySelectorAll('.day-tab')[idx].classList.add('active');setTimeout(initVideoTap,100);}
+function switchDay(idx){stopCurrentVideo();document.querySelectorAll('.day-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.day-tab').forEach(t=>t.classList.remove('active'));document.getElementById('day-'+idx).classList.add('active');document.querySelectorAll('.day-tab')[idx].classList.add('active');setTimeout(initVideoTap,100);}
+
+// Track currently playing video globally
+let _currentVideo = null;
+let _currentOverlay = null;
+
+function stopCurrentVideo() {
+  if (_currentVideo && !_currentVideo.paused) {
+    _currentVideo.pause();
+    if (_currentOverlay) _currentOverlay.style.display = 'flex';
+  }
+  _currentVideo = null;
+  _currentOverlay = null;
+}
 
 // Tap to play/pause each video individually
 // On iOS Safari served over HTTP (GitHub Pages), we fetch the video as a blob
@@ -345,7 +358,6 @@ function _loadBlobSrc(v, src, callback) {
       if (callback) callback();
     })
     .catch(() => {
-      // fallback: just assign src directly
       v.src = src;
       if (callback) callback();
     });
@@ -370,12 +382,18 @@ function initVideoTap() {
       wrap.appendChild(overlay);
     }
 
-    // Get the original src from the <source> tag
     const srcEl = v.querySelector('source');
     const originalSrc = srcEl ? srcEl.getAttribute('src') : null;
 
     function doPlay() {
       const overlay = wrap.querySelector('.play-overlay');
+      // Stop any other playing video first
+      if (_currentVideo && _currentVideo !== v) {
+        _currentVideo.pause();
+        if (_currentOverlay) _currentOverlay.style.display = 'flex';
+      }
+      _currentVideo = v;
+      _currentOverlay = overlay;
       const p = v.play();
       if (p && p.catch) p.catch(() => {});
       if (overlay) overlay.style.display = 'none';
@@ -387,7 +405,6 @@ function initVideoTap() {
       const overlay = wrap.querySelector('.play-overlay');
       if (v.paused || v.ended) {
         if (!v.src && originalSrc) {
-          // First tap: load via blob on HTTP, direct on file://
           if (isHTTP && originalSrc) {
             _loadBlobSrc(v, originalSrc, () => { v.load(); doPlay(); });
           } else {
@@ -400,7 +417,10 @@ function initVideoTap() {
           doPlay();
         }
       } else {
+        // Tapping the playing video pauses it
         v.pause();
+        _currentVideo = null;
+        _currentOverlay = null;
         if (overlay) overlay.style.display = 'flex';
       }
     }
