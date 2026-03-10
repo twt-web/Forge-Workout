@@ -17,14 +17,6 @@
   .logo span { color:var(--text); }
   .header-meta { font-size:0.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:2px; }
   .container { max-width:1100px; margin:0 auto; padding:2rem; }
-  .week-banner { background:linear-gradient(135deg,#111 0%,#1a1a00 100%); border:1px solid var(--border); border-left:4px solid var(--accent); border-radius:4px; padding:1.5rem 2rem; margin-bottom:2rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; }
-  .week-title { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; letter-spacing:3px; }
-  .week-desc { color:var(--muted); font-size:0.85rem; margin-top:0.2rem; }
-  .progress-label .num { font-family:'Bebas Neue',sans-serif; font-size:2rem; color:var(--accent); }
-  .progress-label .sub { font-size:0.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
-  .gif-status { font-size:0.7rem; padding:0.4rem 0.9rem; border-radius:3px; margin-top:0.5rem; display:inline-block; }
-  .gif-status.found { background:#1a2a00; color:#aef542; }
-  .gif-status.missing { background:#2a1000; color:#ff9966; }
   .day-tabs { display:flex; gap:0.5rem; margin-bottom:2rem; overflow-x:auto; padding-bottom:0.5rem; }
   .day-tab { flex-shrink:0; padding:0.6rem 1.2rem; border:1px solid var(--border); border-radius:4px; cursor:pointer; font-size:0.8rem; font-weight:600; text-transform:uppercase; letter-spacing:1px; background:var(--surface); color:var(--muted); transition:all 0.2s; }
   .day-tab:hover { border-color:var(--accent); color:var(--text); }
@@ -37,7 +29,6 @@
   .exercise-grid { display:grid; gap:1rem; }
   .exercise-card { background:var(--card); border:1px solid var(--border); border-radius:6px; overflow:hidden; transition:border-color 0.2s; }
   .exercise-card:hover { border-color:#444; }
-  .exercise-card.completed { border-color:#4a7a00; background:var(--done); }
   .card-top { display:flex; }
   .gif-wrap { width:220px; min-width:220px; height:220px; background:#0d0d0d; overflow:hidden; position:relative; flex-shrink:0; cursor:pointer; touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
   .gif-wrap video { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; display:block; }
@@ -50,28 +41,14 @@
   .card-info { padding:1rem 1.2rem; flex:1; display:flex; flex-direction:column; justify-content:space-between; }
   .exercise-name { font-family:'Bebas Neue',sans-serif; font-size:1.2rem; letter-spacing:2px; line-height:1.1; }
   .exercise-muscle { font-size:0.7rem; text-transform:uppercase; letter-spacing:1px; margin-top:2px; margin-bottom:0.6rem; }
-  .set-label { font-size:0.7rem; color:var(--muted); margin-bottom:0.4rem; }
-  .sets-row { display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.6rem; }
-  .set-btn { width:34px; height:34px; border-radius:4px; border:1px solid var(--border); background:var(--surface); color:var(--muted); font-size:0.7rem; font-weight:600; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; justify-content:center; font-family:'DM Sans',sans-serif; }
-  .set-btn:hover { border-color:var(--accent); color:var(--accent); }
-  .set-btn.done { background:var(--accent); color:#000; border-color:var(--accent); }
   .ex-meta { display:flex; gap:1rem; flex-wrap:wrap; }
   .meta-chip { font-size:0.7rem; color:var(--muted); display:flex; align-items:center; gap:0.3rem; }
   .meta-chip strong { color:var(--text); }
   .tip-row { padding:0.6rem 1.2rem; border-top:1px solid var(--border); font-size:0.72rem; color:var(--muted); display:flex; gap:0.4rem; align-items:flex-start; }
   .tip-icon { color:var(--accent); flex-shrink:0; }
-  .complete-badge { margin-left:auto; background:#4a7a00; color:#aef542; font-size:0.6rem; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:2px 8px; border-radius:20px; display:none; align-items:center; align-self:flex-start; }
-  .exercise-card.completed .complete-badge { display:flex; }
-  .rest-day { text-align:center; padding:4rem 2rem; border:1px dashed var(--border); border-radius:6px; }
   .rest-day .big { font-family:'Bebas Neue',sans-serif; font-size:3rem; letter-spacing:4px; color:var(--muted); }
   .rest-day p { color:var(--muted); font-size:0.85rem; margin-top:0.5rem; max-width:400px; margin-inline:auto; line-height:1.6; }
-  .timer-bar { position:fixed; bottom:0; left:0; right:0; background:var(--surface); border-top:2px solid var(--accent); padding:0.8rem 2rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; z-index:200; transform:translateY(100%); transition:transform 0.3s ease; }
-  .timer-bar.visible { transform:translateY(0); }
-  .timer-label { font-size:0.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
-  .timer-count { font-family:'Bebas Neue',sans-serif; font-size:2.5rem; color:var(--accent); line-height:1; min-width:80px; text-align:center; }
   .timer-count.warning { color:var(--accent2); }
-  .timer-skip { padding:0.5rem 1.2rem; background:transparent; border:1px solid var(--border); color:var(--muted); font-size:0.75rem; cursor:pointer; border-radius:4px; font-family:'DM Sans',sans-serif; text-transform:uppercase; letter-spacing:1px; transition:all 0.2s; }
-  .timer-skip:hover { border-color:var(--text); color:var(--text); }
   .day-panel { display:none; }
   .day-panel.active { display:block; }
   .stats-row { display:flex; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap; }
@@ -87,11 +64,7 @@
   <div class="header-meta">Intermediate · Strength · 4-Day Split</div>
 </header>
 <div class="container">
-  <div class="week-banner">
-    <div>
-      <div class="week-title">⚡ Week 1 — Strength Block</div>
-      <div class="week-desc">3–4 sets · 6–15 reps · 45–120s rest · Progressive overload each week</div>
-      <div id="gifStatusBadge" class="gif-status missing">⏳ Checking for local GIFs…</div>
+<div class="week-desc">3–4 sets · 6–15 reps · 45–120s rest · Progressive overload each week</div>
     </div>
     <div class="progress-label">
       <div class="num" id="globalPct">0%</div>
@@ -119,9 +92,6 @@
     <div class="rest-day"><div class="big">FULL REST</div><p>Complete rest. Sleep well, eat protein, hydrate. Your body grows during recovery — not during the workout.</p></div>
   </div>
 </div>
-<div class="timer-bar" id="timerBar">
-  <div>
-    <div class="timer-label">🔥 Rest Timer</div>
     <div class="timer-label" id="timerExLabel" style="color:#aaa;margin-top:2px;font-size:0.65rem;"></div>
   </div>
   <div class="timer-count" id="timerCount">1:30</div>
@@ -226,8 +196,6 @@ function getMC(m) {
   return '#e8ff00';
 }
 
-const setStates = {};
-let timerInterval=null, timerSeconds=0;
 
 function buildAllDays() {
   DAYS.forEach(day => {
@@ -249,11 +217,6 @@ function buildAllDays() {
 
 function buildCard(dayId, eIdx, ex) {
   const mc = getMC(ex.muscle);
-  let sets='';
-  for (let s=0; s<ex.sets; s++) {
-    const done = setStates[`${dayId}-${eIdx}-${s}`]||false;
-    sets += `<button class="set-btn${done?' done':''}" onclick="toggleSet(${dayId},${eIdx},${s},${ex.rest},'${ex.name.replace(/'/g,"\\'")}')">S${s+1}</button>`;
-  }
   // Media: use embedded data URI if available (standalone mode), else fall back to file path
   const mp4Path = `gifs/${ex.gif}.mp4`;
   const jpgPath = `gifs/${ex.gif}.jpg`;
@@ -275,10 +238,10 @@ function buildCard(dayId, eIdx, ex) {
               <div class="exercise-name">${ex.name}</div>
               <div class="exercise-muscle" style="color:${mc}">${ex.muscle}</div>
             </div>
-            <div class="complete-badge">✓ Done</div>
+
           </div>
-          <div class="set-label">Sets completed:</div>
-          <div class="sets-row">${sets}</div>
+
+
         </div>
         <div class="ex-meta">
           <div class="meta-chip">📊 <strong>${ex.sets} sets</strong></div>
@@ -291,43 +254,7 @@ function buildCard(dayId, eIdx, ex) {
   </div>`;
 }
 
-function toggleSet(dayId, eIdx, setIdx, restSecs, exName) {
-  const key=`${dayId}-${eIdx}-${setIdx}`;
-  const card=document.getElementById(`card-${dayId}-${eIdx}`);
-  const btn=card?.querySelectorAll('.set-btn')[setIdx];
-  if (!btn) return;
-  const wasDone=setStates[key]||false;
-  setStates[key]=!wasDone;
-  btn.classList.toggle('done',!wasDone);
-  if (!wasDone) startTimer(restSecs, exName);
-  let exList=[];
-  DAYS[dayId].sections.forEach(s=>exList=exList.concat(s.exercises));
-  const ex=exList[eIdx];
-  if (ex&&card) {
-    let allDone=true;
-    for(let s=0;s<ex.sets;s++){if(!setStates[`${dayId}-${eIdx}-${s}`]){allDone=false;break;}}
-    card.classList.toggle('completed',allDone);
-  }
-  updateGlobalProgress();
-}
 
-function startTimer(seconds, label) {
-  if(timerInterval) clearInterval(timerInterval);
-  timerSeconds=seconds;
-  const bar=document.getElementById('timerBar'), count=document.getElementById('timerCount');
-  document.getElementById('timerExLabel').textContent=`Rest after: ${label}`;
-  bar.classList.add('visible'); updateTimerDisplay(count);
-  timerInterval=setInterval(()=>{
-    timerSeconds--;
-    if(timerSeconds<=0){
-      clearInterval(timerInterval); bar.classList.remove('visible');
-      try{const ctx=new AudioContext(),o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=880;g.gain.setValueAtTime(0.3,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.5);o.start();o.stop(ctx.currentTime+0.5);}catch(e){}
-    } else updateTimerDisplay(count);
-  },1000);
-}
-function updateTimerDisplay(el){const m=Math.floor(timerSeconds/60),s=timerSeconds%60;el.textContent=`${m}:${s.toString().padStart(2,'0')}`;el.classList.toggle('warning',timerSeconds<=10);}
-function skipTimer(){if(timerInterval)clearInterval(timerInterval);document.getElementById('timerBar').classList.remove('visible');}
-function updateGlobalProgress(){let total=0,done=0;DAYS.forEach(day=>{if(day.rest)return;let gIdx=0;day.sections.forEach(sec=>{sec.exercises.forEach(ex=>{for(let s=0;s<ex.sets;s++){total++;if(setStates[`${day.id}-${gIdx}-${s}`])done++;}gIdx++;});});});document.getElementById('globalPct').textContent=total>0?Math.round(done/total*100)+'%':'0%';}
 function switchDay(idx){stopCurrentVideo();document.querySelectorAll('.day-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.day-tab').forEach(t=>t.classList.remove('active'));document.getElementById('day-'+idx).classList.add('active');document.querySelectorAll('.day-tab')[idx].classList.add('active');setTimeout(initVideoTap,100);}
 
 // Track currently playing video globally
@@ -431,15 +358,6 @@ function initVideoTap() {
 }
 
 // Check if media files exist
-function checkGifStatus() {
-  const badge = document.getElementById('gifStatusBadge');
-  // Use fetch to check if the video file is accessible (works both locally and on GitHub Pages)
-  fetch('gifs/bench_press.mp4', { method: 'HEAD' })
-    .then(r => {
-      if (r.ok) {
-        badge.textContent = '✅ Exercise videos loaded';
-        badge.className = 'gif-status found';
-      } else { throw new Error('not found'); }
     })
     .catch(() => {
       // Try jpg fallback
@@ -458,8 +376,6 @@ function checkGifStatus() {
 }
 
 buildAllDays();
-updateGlobalProgress();
-checkGifStatus();
 setTimeout(initVideoTap, 200);
 </script>
 </body>
